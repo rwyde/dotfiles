@@ -7,7 +7,10 @@ lsp.ensure_installed({
     'eslint',
     'lua_ls',
     'rust_analyzer',
+    'gopls',
 })
+
+lsp.configure('gopls')
 
 lsp.configure('graphql')
 -- Fix Undefined global 'vim'
@@ -95,6 +98,15 @@ local util = require 'lspconfig.util'
 lsp.configure('tsserver', {
     root_dir = util.root_pattern('.git'),
 })
+
+lsp.configure('gleam', {
+    cmd = { 'gleam', 'lsp' },
+    filetypes = { 'gleam' },
+    root_dir = function(fname)
+        return util.root_pattern('gleam.toml', '.git')(fname)
+    end,
+    }
+)
 
 lsp.setup()
 

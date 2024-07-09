@@ -35,6 +35,7 @@ alias gP="git push"
 alias nr="npm run"
 alias mpv="swallow mpv"
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias orphans="yay -Qdtq | yay -Rns -"
 
 eval "$(starship init zsh)"
 unset npm_config_prefix
