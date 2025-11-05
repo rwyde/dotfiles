@@ -1,10 +1,6 @@
-local null_ls = require("null-ls")
-local eslint = require("eslint")
-
-null_ls.setup()
-
-eslint.setup({
-  bin = 'eslint_d', -- or `eslint_d`
+return {
+  bin = 'eslint_d',
+  filetypes = { 'jsx' },
   code_actions = {
     enable = true,
     apply_on_save = {
@@ -21,4 +17,4 @@ eslint.setup({
     report_unused_disable_directives = false,
     run_on = "type", -- or `save`
   },
-})
+}

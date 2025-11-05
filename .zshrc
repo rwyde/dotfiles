@@ -15,14 +15,17 @@ compinit
 promptinit
 # End of lines added by compinstall
 
-# prompt walters
+# fzf
+source <(fzf --zsh)
 
 # Aliases
 
 alias ls="ls --color=auto"
+alias ll="ls -l --color=auto"
 alias vim="nvim"
 alias v="nvim"
 alias grep="rg"
+alias rgf="rg --files | rg"
 alias k="kubectl"
 alias s="systemctl"
 alias history='history 1 -1'
@@ -34,8 +37,8 @@ alias gp="git pull"
 alias gP="git push"
 alias nr="npm run"
 alias mpv="swallow mpv"
-alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias orphans="yay -Qdtq | yay -Rns -"
+alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 eval "$(starship init zsh)"
 unset npm_config_prefix
@@ -53,7 +56,11 @@ complete -o nospace -C /usr/bin/terraform terraform
 # Load Git completion
 zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
 fpath=(~/.zsh $fpath)
+compdef dots=git
 
 autoload -Uz compinit && compinit
 
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+# Window title
+# preexec() { print -Pn "\e]0;$1%~\a" }
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$HOME/go/bin:$PATH"
