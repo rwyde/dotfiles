@@ -1,0 +1,7 @@
+add_newline = false
+
+[aws]
+format = ''
+
+[cmd_duration]
+disabled = true
