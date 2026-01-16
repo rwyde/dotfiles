@@ -15,10 +15,17 @@ return {
       contrast = 'hard' }
   },
   {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    build =
+    'make'
+  },
+  {
     'nvim-telescope/telescope.nvim',
     tag = '0.1.8',
     dependencies = {
-      'nvim-lua/plenary.nvim' },
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-fzf-native.nvim',
+    },
     config = function()
       local builtin = require('telescope.builtin')
       vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
@@ -28,11 +35,6 @@ return {
       end)
       require('telescope').load_extension('fzf')
     end
-  },
-  {
-    'nvim-telescope/telescope-fzf-native.nvim',
-    build =
-    'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release'
   },
   {
     'nvim-lualine/lualine.nvim',

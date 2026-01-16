@@ -35,3 +35,14 @@ vim.api.nvim_create_user_command('FixVersesSafe', function()
     -- Wrap lines starting with <, any letter, or quotation mark in asterisks
     safe_cmd([[%s/^[<a-zA-Z"'].*/\*&\*/g]])
 end, { desc = "Fix formatting issues in verses" })
+
+local M = {}
+function M.get_hostname()
+    local handle = io.popen("hostnamectl hostname") -- Execute the 'hostname' command
+    local hostname = handle:read("*a") or "" -- Read the output
+    handle:close()
+    hostname = hostname:gsub("%s+$", "") -- Remove trailing whitespace (including newlines)
+    return hostname
+end
+
+return M

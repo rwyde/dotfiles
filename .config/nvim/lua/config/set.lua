@@ -1,3 +1,5 @@
+local utils = require("config.utils")
+
 vim.opt.guicursor = ''
 
 vim.opt.nu = true
@@ -37,11 +39,16 @@ vim.g.claude_use_bedrock = 1
 vim.g.claude_aws_profile = "sidev"
 -- vim.g.claude_api_key = os.getenv("CLAUDE_API_KEY")
 
-vim.o.background = "dark"
-vim.cmd([[
-  hi! link Delimiter GruvboxOrange
-  colorscheme gruvbox
-]])
+local current_hostname = utils.get_hostname()
+if current_hostname == 't15' then
+  vim.o.background = "dark"
+  vim.cmd([[
+    hi! link Delimiter GruvboxOrange
+    colorscheme gruvbox
+  ]])
+else
+  vim.cmd("colorscheme tomorrow")
+end
 
 vim.diagnostic.config {
   virtual_text = true,
