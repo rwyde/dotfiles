@@ -1,5 +1,5 @@
 return {
-  filetypes = { "astro", "css", "graphql", "javascript", "javascriptreact", "json", "jsonc", "svelte", "typescript", "typescript.tsx", "typescriptreact", "vue" },
+  filetypes = { "astro", "css", "graphql", "javascript", "javascriptreact", "json", "jsonc", "svelte", "typescript", "typescriptreact", "vue" },
   on_attach = function(client, bufnr)
     local original_notify = vim.notify
     vim.notify = function(msg, level, opts)

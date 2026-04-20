@@ -1,7 +1,7 @@
 typeset -U path PATH
 path=(~/.local/bin $path)
 
-if [[ "$(hostname)" == "x230" ]]; then
+if [[ "$(hostnamectl hostname)" == "x230" ]]; then
   export MOZ_DISABLE_RDD_SANDBOX=1
   export LIBVA_DRIVER_NAME=nvidia
   export VDPAU_DRIVER=nvidia

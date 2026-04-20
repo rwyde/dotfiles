@@ -36,9 +36,12 @@ alias gc="git commit"
 alias gp="git pull"
 alias gP="git push"
 alias nr="npm run"
-alias mpv="swallow mpv"
 alias orphans="yay -Qdtq | yay -Rns -"
+alias opencode="AWS_ACCESS_KEY_ID=$BEDROCK_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$BEDROCK_SECRET_ACCESS_KEY opencode"
+alias oc="AWS_ACCESS_KEY_ID=$BEDROCK_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$BEDROCK_SECRET_ACCESS_KEY opencode"
 alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias music="rmpc"
+[ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
 
 eval "$(starship init zsh)"
 unset npm_config_prefix
@@ -62,5 +65,6 @@ autoload -Uz compinit && compinit
 
 # Window title
 # preexec() { print -Pn "\e]0;$1%~\a" }
+# fpath+=("$HOME/.zsh/functions")
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$HOME/go/bin:$PATH"
