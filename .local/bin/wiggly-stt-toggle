@@ -119,7 +119,9 @@ smart_paste() {
         return 1
     fi
 
-    if ! printf '%s' "$text" | wl-copy 2>/dev/null; then
+    # wl-copy stays resident while owning the clipboard; never let it inherit
+    # the per-invocation toggle lock.
+    if ! printf '%s' "$text" | wl-copy 9>&- 2>/dev/null; then
         notify_warning "Failed to copy transcription to clipboard"
     fi
 
