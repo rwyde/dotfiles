@@ -1,2 +1,5 @@
 # Host-specific Hyprland monitor and workspace routing
 .config/hypr/machine.conf
+
+# Host-specific Wiggly model and inference settings
+.local/share/wiggly-stt/wiggly-stt.conf

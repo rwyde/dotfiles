@@ -9,6 +9,8 @@ DEBUG_LOG="/tmp/wiggly-stt-toggle.log"
 
 MODEL_PATH="${HOME}/.models"
 DEFAULT_MODEL="ggml-large-v3-turbo.bin"
+WHISPER_THREADS=""
+WHISPER_NO_GPU=""
 
 # Terminal/editor patterns that should use wtype instead of paste
 TYPE_FOR_CLASSES="kitty|alacritty|foot|wezterm|ghostty|org.wezfurlong|terminal|konsole|gnome-terminal"
@@ -37,6 +39,8 @@ load_wiggly_config() {
     local config_file=""
     local configured_model_path=""
     local configured_default_model=""
+    local configured_threads=""
+    local configured_no_gpu=""
 
     if [ -f "/usr/share/wiggly-stt/wiggly-stt.conf" ]; then
         config_file="/usr/share/wiggly-stt/wiggly-stt.conf"
@@ -50,6 +54,8 @@ load_wiggly_config() {
 
     configured_model_path=$(sed -n 's/^MODEL_PATH="\(.*\)"$/\1/p' "$config_file" | head -n 1)
     configured_default_model=$(sed -n 's/^DEFAULT_MODEL="\(.*\)"$/\1/p' "$config_file" | head -n 1)
+    configured_threads=$(sed -n 's/^WHISPER_THREADS="\(.*\)"$/\1/p' "$config_file" | head -n 1)
+    configured_no_gpu=$(sed -n 's/^WHISPER_NO_GPU="\(.*\)"$/\1/p' "$config_file" | head -n 1)
 
     if [ -n "$configured_model_path" ]; then
         configured_model_path=${configured_model_path//\$\{HOME\}/$HOME}
@@ -60,11 +66,19 @@ load_wiggly_config() {
     if [ -n "$configured_default_model" ]; then
         DEFAULT_MODEL="$configured_default_model"
     fi
+
+    if [[ "$configured_threads" =~ ^[1-9][0-9]*$ ]]; then
+        WHISPER_THREADS="$configured_threads"
+    fi
+
+    if [ "$configured_no_gpu" = "1" ]; then
+        WHISPER_NO_GPU=1
+    fi
 }
 
 check_dependencies() {
     local cmd
-    for cmd in hyprctl jq ffmpeg whisper-cli wl-copy wtype; do
+    for cmd in hyprctl jq ffmpeg whisper-cli wl-copy wtype flock; do
         if ! command -v "$cmd" >/dev/null 2>&1; then
             notify_error "Missing dependency: $cmd"
             exit 1
@@ -169,8 +183,19 @@ stop_recording() {
 
     log_debug "stop: transcribing audio with model=$model_file"
 
+    local -a whisper_args
+    whisper_args=(-m "$model_file" -f "$AUDIO_FILE" --no-timestamps --no-prints)
+
+    if [ -n "$WHISPER_THREADS" ]; then
+        whisper_args=(-t "$WHISPER_THREADS" "${whisper_args[@]}")
+    fi
+
+    if [ "$WHISPER_NO_GPU" = "1" ]; then
+        whisper_args=(--no-gpu "${whisper_args[@]}")
+    fi
+
     local text
-    text=$(whisper-cli -m "$model_file" -f "$AUDIO_FILE" --no-timestamps --no-prints 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    text=$(whisper-cli "${whisper_args[@]}" 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
 
     if [ -z "$text" ]; then
         notify_warning "No speech detected"
@@ -185,6 +210,13 @@ stop_recording() {
 
 check_dependencies
 load_wiggly_config
+
+mkdir -p "$STATE_DIR"
+exec 9>"$STATE_DIR/toggle.lock"
+if ! flock -n 9; then
+    log_debug "ignored: another toggle operation is already running"
+    exit 0
+fi
 
 if is_recording; then
     stop_recording
