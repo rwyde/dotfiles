@@ -147,7 +147,8 @@ start_recording() {
 
     hyprctl dispatch submap dictation >/dev/null 2>&1 || true
 
-    ffmpeg -f pulse -i default -ar 16000 "$AUDIO_FILE" -y >/dev/null 2>&1 &
+    # Do not let the long-running recorder inherit the per-invocation lock.
+    ffmpeg -f pulse -i default -ar 16000 "$AUDIO_FILE" -y 9>&- >/dev/null 2>&1 &
     local recorder_pid=$!
     echo "$recorder_pid" > "$PID_FILE"
 
