@@ -1,0 +1,27 @@
+#!/bin/bash
+# Cancel local dictation recording without transcribing
+
+STATE_DIR="/tmp/wiggly-hypr"
+PID_FILE="$STATE_DIR/recording.pid"
+AUDIO_FILE="$STATE_DIR/recording.wav"
+
+signal_waybar() {
+    pkill -RTMIN+8 waybar
+}
+
+if [ -f "$PID_FILE" ]; then
+    pid=$(cat "$PID_FILE")
+
+    # Kill recorder directly (no transcription)
+    kill -9 "$pid" 2>/dev/null || true
+
+    # Clean up
+    rm -f "$PID_FILE"
+    rm -f "$AUDIO_FILE"
+fi
+
+# Exit dictation submap
+hyprctl dispatch submap reset
+
+# Signal waybar to update
+signal_waybar

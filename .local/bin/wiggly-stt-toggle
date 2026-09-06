@@ -1,0 +1,193 @@
+#!/bin/bash
+# Toggle local dictation recording with smart paste
+
+STATE_DIR="/tmp/wiggly-hypr"
+PID_FILE="$STATE_DIR/recording.pid"
+AUDIO_FILE="$STATE_DIR/recording.wav"
+TRANSCRIPTION_FILE="$STATE_DIR/last_transcription.txt"
+DEBUG_LOG="/tmp/wiggly-stt-toggle.log"
+
+MODEL_PATH="${HOME}/.models"
+DEFAULT_MODEL="ggml-large-v3-turbo.bin"
+
+# Terminal/editor patterns that should use wtype instead of paste
+TYPE_FOR_CLASSES="kitty|alacritty|foot|wezterm|ghostty|org.wezfurlong|terminal|konsole|gnome-terminal"
+
+signal_waybar() {
+    pkill -RTMIN+8 waybar
+}
+
+log_debug() {
+    printf '%s %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$1" >> "$DEBUG_LOG"
+}
+
+notify_error() {
+    local message="$1"
+    log_debug "error: $message"
+    notify-send "Wiggly Dictation" "$message" -u critical -t 5000 2>/dev/null || true
+}
+
+notify_warning() {
+    local message="$1"
+    log_debug "warning: $message"
+    notify-send "Wiggly Dictation" "$message" -u normal -t 4000 2>/dev/null || true
+}
+
+load_wiggly_config() {
+    local config_file=""
+    local configured_model_path=""
+    local configured_default_model=""
+
+    if [ -f "/usr/share/wiggly-stt/wiggly-stt.conf" ]; then
+        config_file="/usr/share/wiggly-stt/wiggly-stt.conf"
+    elif [ -f "$HOME/.local/share/wiggly-stt/wiggly-stt.conf" ]; then
+        config_file="$HOME/.local/share/wiggly-stt/wiggly-stt.conf"
+    fi
+
+    if [ -z "$config_file" ]; then
+        return 0
+    fi
+
+    configured_model_path=$(sed -n 's/^MODEL_PATH="\(.*\)"$/\1/p' "$config_file" | head -n 1)
+    configured_default_model=$(sed -n 's/^DEFAULT_MODEL="\(.*\)"$/\1/p' "$config_file" | head -n 1)
+
+    if [ -n "$configured_model_path" ]; then
+        configured_model_path=${configured_model_path//\$\{HOME\}/$HOME}
+        configured_model_path=${configured_model_path//\$HOME/$HOME}
+        MODEL_PATH="$configured_model_path"
+    fi
+
+    if [ -n "$configured_default_model" ]; then
+        DEFAULT_MODEL="$configured_default_model"
+    fi
+}
+
+check_dependencies() {
+    local cmd
+    for cmd in hyprctl jq ffmpeg whisper-cli wl-copy wtype; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            notify_error "Missing dependency: $cmd"
+            exit 1
+        fi
+    done
+}
+
+is_recording() {
+    if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+        return 0
+    fi
+
+    rm -f "$PID_FILE"
+    return 1
+}
+
+resolve_model_path() {
+    local model_file="$MODEL_PATH/$DEFAULT_MODEL"
+    if [ -f "$model_file" ]; then
+        printf '%s' "$model_file"
+        return 0
+    fi
+
+    model_file="$MODEL_PATH/ggml-base.en.bin"
+    if [ -f "$model_file" ]; then
+        printf '%s' "$model_file"
+        return 0
+    fi
+
+    return 1
+}
+
+smart_paste() {
+    local text="$1"
+
+    if [ -z "$text" ]; then
+        notify_warning "No text available to paste"
+        return 1
+    fi
+
+    if ! printf '%s' "$text" | wl-copy 2>/dev/null; then
+        notify_warning "Failed to copy transcription to clipboard"
+    fi
+
+    local window_class
+    window_class=$(hyprctl activewindow -j | jq -r '.class // ""' 2>/dev/null)
+
+    if printf '%s' "$window_class" | grep -qiE "$TYPE_FOR_CLASSES"; then
+        if ! wtype -- "${text//$'\n'/ }" 2>/dev/null; then
+            notify_error "Failed to type transcription into terminal"
+            return 1
+        fi
+    else
+        if ! wtype -M ctrl -k v -m ctrl 2>/dev/null; then
+            notify_error "Failed to paste transcription into active window"
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+start_recording() {
+    mkdir -p "$STATE_DIR"
+    rm -f "$AUDIO_FILE"
+
+    hyprctl dispatch submap dictation >/dev/null 2>&1 || true
+
+    ffmpeg -f pulse -i default -ar 16000 "$AUDIO_FILE" -y >/dev/null 2>&1 &
+    local recorder_pid=$!
+    echo "$recorder_pid" > "$PID_FILE"
+
+    log_debug "start: recorder pid=$recorder_pid"
+    signal_waybar
+}
+
+stop_recording() {
+    local pid
+    pid=$(cat "$PID_FILE" 2>/dev/null || true)
+
+    if [ -n "$pid" ]; then
+        kill -TERM "$pid" 2>/dev/null || true
+        sleep 0.4
+        kill -0 "$pid" 2>/dev/null && kill -KILL "$pid" 2>/dev/null || true
+    fi
+
+    rm -f "$PID_FILE"
+
+    hyprctl dispatch submap reset >/dev/null 2>&1 || true
+    signal_waybar
+
+    if [ ! -s "$AUDIO_FILE" ]; then
+        notify_warning "No audio recorded"
+        return 0
+    fi
+
+    local model_file
+    if ! model_file=$(resolve_model_path); then
+        notify_error "Whisper model not found in $MODEL_PATH"
+        return 1
+    fi
+
+    log_debug "stop: transcribing audio with model=$model_file"
+
+    local text
+    text=$(whisper-cli -m "$model_file" -f "$AUDIO_FILE" --no-timestamps --no-prints 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+    if [ -z "$text" ]; then
+        notify_warning "No speech detected"
+        return 0
+    fi
+
+    printf '%s\n' "$text" > "$TRANSCRIPTION_FILE"
+    log_debug "stop: transcription chars=${#text}"
+
+    smart_paste "$text"
+}
+
+check_dependencies
+load_wiggly_config
+
+if is_recording; then
+    stop_recording
+else
+    start_recording
+fi
