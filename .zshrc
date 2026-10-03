@@ -68,3 +68,6 @@ autoload -Uz compinit && compinit
 # fpath+=("$HOME/.zsh/functions")
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$HOME/go/bin:$PATH"
+
+# Pi
+export PATH="/home/rob/.local/share/pi-node/node-v22.23.2-linux-x64/bin:$PATH"

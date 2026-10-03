@@ -41,11 +41,12 @@ vim.g.claude_aws_profile = "sidev"
 
 local current_hostname = utils.get_hostname()
 if current_hostname == 't15' then
-  vim.o.background = "dark"
-  vim.cmd([[
-    hi! link Delimiter GruvboxOrange
-    colorscheme gruvbox
-  ]])
+  vim.cmd("colorscheme tomorrow")
+  -- vim.o.background = "dark"
+  -- vim.cmd([[
+  --   hi! link Delimiter GruvboxOrange
+  --   colorscheme gruvbox
+  -- ]])
 else
   vim.cmd("colorscheme tomorrow")
 end

@@ -40,7 +40,7 @@ return {
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
       options = {
-        theme = 'gruvbox',
+        theme = 'base16',
         component_separators = '|',
         section_separators = ''
       }
@@ -48,7 +48,7 @@ return {
     config = function() require('lualine').setup(opts) end
   },
   {
-  'nvim-treesitter/nvim-treesitter',
+    'nvim-treesitter/nvim-treesitter',
     lazy = false,
     build = ':TSUpdate'
   },
