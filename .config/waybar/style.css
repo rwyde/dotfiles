@@ -119,26 +119,26 @@ button:hover {
 }
 
 #battery {
-    background-color: #ffffff;
+    background-color: #e6c446;
     color: #000000;
 }
 
 #battery.charging, #battery.plugged {
-    color: #ffffff;
-    background-color: #26A65B;
+    background-color: #70c0b1;
+    color: #000000;
 }
 
 @keyframes blink {
     to {
-        background-color: #ffffff;
+        background-color: #e6c446;
         color: #000000;
     }
 }
 
 /* Using steps() instead of linear as a timing function to limit cpu usage */
 #battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
+    background-color: #d44d53;
+    color: #000000;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: steps(12);
