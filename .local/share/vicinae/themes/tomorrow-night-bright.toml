@@ -1,0 +1,79 @@
+[meta]
+version = 1
+name = "Tomorrow Night Bright"
+description = "Black and teal theme matching the desktop Tomorrow palette"
+variant = "dark"
+inherits = "vicinae-dark"
+
+[colors.core]
+accent = "#70c0b1"
+accent_foreground = "#000000"
+background = "#000000"
+foreground = "#e9e9e9"
+secondary_background = "#161616"
+border = "#666666"
+
+[colors.main_window]
+border = "#70c0b1"
+footer = { background = "#161616" }
+
+[colors.settings_window]
+border = "#70c0b1"
+
+[colors.accents]
+blue = "#79a6da"
+green = "#b9c949"
+magenta = "#c396d7"
+orange = "#e6c446"
+red = "#d44d53"
+yellow = "#e6c446"
+cyan = "#70c0b1"
+purple = "#c396d7"
+
+[colors.shortcut]
+border = "#666666"
+
+[colors.text]
+default = "#e9e9e9"
+muted = "#b0b0b0"
+danger = "#d44d53"
+success = "#b9c949"
+placeholder = "#777777"
+selection = { background = "#70c0b1", foreground = "#000000" }
+
+[colors.text.links]
+default = "#79a6da"
+visited = "#c396d7"
+
+[colors.input]
+border = "#666666"
+border_focus = "#70c0b1"
+border_error = "#d44d53"
+
+[colors.button.primary]
+background = "#222222"
+foreground = "#e9e9e9"
+hover = { background = "#424242" }
+focus = { outline = "#70c0b1" }
+
+[colors.list.item.hover]
+foreground = "#fffefe"
+secondary_foreground = "#e9e9e9"
+
+[colors.list.item.selection]
+background = "#424242"
+foreground = "#fffefe"
+secondary_background = "#424242"
+secondary_foreground = "#e9e9e9"
+
+[colors.grid.item]
+background = "#161616"
+hover = { outline = "#70c0b1" }
+selection = { outline = "#70c0b1" }
+
+[colors.scrollbars]
+background = "#424242"
+
+[colors.loading]
+bar = "#70c0b1"
+spinner = "#e9e9e9"

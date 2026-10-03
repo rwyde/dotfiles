@@ -14,6 +14,7 @@ The repository is managed as a **bare Git repository** whose work tree is `$HOME
 | `.config/kitty/` | Kitty settings and Tomorrow Night Bright theme |
 | `.config/nvim/` | Neovim configuration, plugins, LSP setup, completion, and custom Tomorrow theme |
 | `.config/vicinae/` | Vicinae launcher appearance and behavior |
+| `.local/share/vicinae/themes/` | Custom Tomorrow Night Bright theme for Vicinae |
 | `.config/starship.toml` | Minimal Starship prompt configuration |
 | `.local/bin/wiggly-stt-*` | Local Whisper-based dictation controls for Hyprland |
 | `.zshenv`, `.zshrc` | Shell environment, aliases, completion, fzf, Starship, NVM, and the `dots` command |
@@ -138,5 +139,5 @@ Neovim plugins install themselves through lazy.nvim. Language servers and extern
 
 - The tracked wallpaper is `.config/hypr/wallpapers/archGrey.png`.
 - Hypridle turns displays off after 30 minutes and restores them on input.
-- Vicinae uses a dark, nearly opaque, rounded window with Noto Sans Mono.
+- Vicinae uses the custom square, opaque Tomorrow Night Bright theme with DejaVu Sans Mono.
 - Kitty and the desktop share a black-and-teal Tomorrow-inspired palette.
