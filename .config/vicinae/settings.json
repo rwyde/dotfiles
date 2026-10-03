@@ -3,6 +3,9 @@
   "telemetry": {
     "system_info": false
   },
+  "tray": {
+    "enabled": false
+  },
   "search_files_in_root": false,
   "close_on_focus_loss": false,
   "consider_preedit": false,
