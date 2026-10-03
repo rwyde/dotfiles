@@ -18,11 +18,11 @@
   "theme": {
     "light": {
       "name": "tomorrow-night-bright",
-      "icon_theme": "auto"
+      "icon_theme": "Chicago95"
     },
     "dark": {
       "name": "tomorrow-night-bright",
-      "icon_theme": "auto"
+      "icon_theme": "Chicago95"
     }
   },
   "launcher_window": {

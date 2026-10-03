@@ -139,5 +139,6 @@ Neovim plugins install themselves through lazy.nvim. Language servers and extern
 
 - The tracked wallpaper is `.config/hypr/wallpapers/archGrey.png`.
 - Hypridle turns displays off after 30 minutes and restores them on input.
-- Vicinae uses the custom square, opaque Tomorrow Night Bright theme with DejaVu Sans Mono.
+- Vicinae uses the custom square, opaque Tomorrow Night Bright theme with DejaVu Sans Mono and the [Chicago95](https://github.com/grassmunk/Chicago95) XDG icon theme.
+- Chicago95 is installed separately under `~/.local/share/icons/Chicago95`; its third-party assets are not vendored in this repository.
 - Kitty and the desktop share a black-and-teal Tomorrow-inspired palette.
