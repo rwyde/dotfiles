@@ -18,6 +18,7 @@
     ],
     "modules-right": [
         "mpd",
+        "custom/codex-usage",
         // "pulseaudio",
         "cpu",
         "memory",

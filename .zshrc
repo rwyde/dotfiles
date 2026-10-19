@@ -37,10 +37,12 @@ alias gp="git pull"
 alias gP="git push"
 alias nr="npm run"
 alias orphans="yay -Qdtq | yay -Rns -"
-alias opencode="AWS_ACCESS_KEY_ID=$BEDROCK_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$BEDROCK_SECRET_ACCESS_KEY opencode"
-alias oc="AWS_ACCESS_KEY_ID=$BEDROCK_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$BEDROCK_SECRET_ACCESS_KEY opencode"
+alias opencode='OPENCODE_SERVER_USERNAME=opencode OPENCODE_SERVER_PASSWORD="$(< "$HOME/.config/opencode/server-password")" command opencode attach http://127.0.0.1:4096'
+alias oc='opencode'
 alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias music="rmpc"
+alias p="pnpm"
+alias si='pnpm --dir /home/rob/src/si-platform/main exec tsx packages/cli/src/index.ts'
 [ "$TERM" = "xterm-kitty" ] && alias ssh="kitty +kitten ssh"
 
 eval "$(starship init zsh)"
@@ -67,7 +69,7 @@ autoload -Uz compinit && compinit
 # preexec() { print -Pn "\e]0;$1%~\a" }
 # fpath+=("$HOME/.zsh/functions")
 
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$HOME/go/bin:$PATH"
+export PATH="$HOME/.cargo/bin:${KREW_ROOT:-$HOME/.krew}/bin:$HOME/go/bin:$PATH"
 
 # Pi
-export PATH="/home/rob/.local/share/pi-node/node-v22.23.2-linux-x64/bin:$PATH"
+export PATH="/home/rob/.pi/agent/bin:$PATH"

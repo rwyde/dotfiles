@@ -12,6 +12,7 @@ else
 fi
 
 export EDITOR=nvim
+export TERMINAL=kitty
 export PATH
 
 alias assume=". assume"

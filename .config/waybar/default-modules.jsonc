@@ -208,6 +208,12 @@
             "hibernate": "systemctl hibernate"
         }
     },
+    "custom/codex-usage": {
+        "exec": "$HOME/src/waybar-codex-usage/codex-usage",
+        "return-type": "json",
+        "interval": 60,
+        "tooltip": true
+    },
     "custom/wiggly-stt": {
         "exec": "~/.config/waybar/scripts/wiggly-stt-status.sh",
         "return-type": "json",
